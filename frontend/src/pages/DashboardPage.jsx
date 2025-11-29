@@ -54,14 +54,14 @@ export default function DashboardPage() {
   const maxCalories = Math.max(...weeklyCalories.map(d => d.consumed), ...weeklyCalories.map(d => d.target));
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
+    <div className="min-h-screen bg-background pt-16">
       {/* Header */}
-      <div className="bg-white border-b sticky top-16 z-10">
+      <div className="bg-card border-b border-border sticky top-16 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-muted rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -70,9 +70,9 @@ export default function DashboardPage() {
                 <div className="p-2 bg-primary/10 rounded-lg">
                   <BarChart3 className="w-6 h-6 text-primary" />
                 </div>
-                <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+                <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
               </div>
-              <p className="text-sm text-gray-500">Track your daily progress and trends</p>
+              <p className="text-sm text-muted-foreground">Track your daily progress and trends</p>
             </div>
           </div>
         </div>
@@ -81,62 +81,62 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
         
         {/* Daily Overview Card */}
-        <div className="bg-linear-to-br from-[#06D6A0]/10 via-white to-[#073B4C]/10 rounded-2xl p-6 shadow-lg border border-gray-100 animate-fade-in">
+        <div className="bg-gradient-to-br from-primary/10 via-card to-accent/10 rounded-2xl p-6 shadow-lg border border-border animate-fade-in">
 
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-primary/10 rounded-lg">
                 <Activity className="w-6 h-6 text-primary" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Today's Overview</h2>
+              <h2 className="text-xl font-bold text-foreground">Today's Overview</h2>
             </div>
-            <div className="text-sm text-gray-500">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
+            <div className="text-sm text-muted-foreground">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-6">
             {/* Calories In */}
-            <div className="bg-white rounded-xl p-4 shadow-sm">
-              <div className="text-sm text-gray-600 mb-1">Calories In</div>
-              <div className="text-3xl font-bold bg-linear-to-r from-[#FFD166] to-[#EF476F] bg-clip-text text-transparent">
+            <div className="bg-card rounded-xl p-4 shadow-sm">
+              <div className="text-sm text-muted-foreground mb-1">Calories In</div>
+              <div className="text-3xl font-bold bg-gradient-to-r from-chart-4 to-destructive bg-clip-text text-transparent">
                 {today.caloriesConsumed}
               </div>
-              <div className="text-xs text-gray-500 mt-1">from nutrition</div>
+              <div className="text-xs text-muted-foreground mt-1">from nutrition</div>
             </div>
 
             {/* Calories Out */}
-            <div className="bg-white rounded-xl p-4 shadow-sm">
-              <div className="text-sm text-gray-600 mb-1">Calories Out</div>
-              <div className="text-3xl font-bold bg-linear-to-r from-[#06D6A0] to-[#073B4C] bg-clip-text text-transparent">
+            <div className="bg-card rounded-xl p-4 shadow-sm">
+              <div className="text-sm text-muted-foreground mb-1">Calories Out</div>
+              <div className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 {today.caloriesBurned}
               </div>
-              <div className="text-xs text-gray-500 mt-1">from workouts</div>
+              <div className="text-xs text-muted-foreground mt-1">from workouts</div>
             </div>
 
             {/* Remaining */}
-            <div className="bg-white rounded-xl p-4 shadow-sm">
-              <div className="text-sm text-gray-600 mb-1">Remaining</div>
-              <div className="text-3xl font-bold text-gray-900">
+            <div className="bg-card rounded-xl p-4 shadow-sm">
+              <div className="text-sm text-muted-foreground mb-1">Remaining</div>
+              <div className="text-3xl font-bold text-foreground">
                 {today.remainingCalories}
               </div>
-              <div className="text-xs text-gray-500 mt-1">to reach goal</div>
+              <div className="text-xs text-muted-foreground mt-1">to reach goal</div>
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-card rounded-xl p-4 shadow-sm">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-600">Daily Progress</span>
-              <span className="font-semibold text-gray-900">
+              <span className="text-muted-foreground">Daily Progress</span>
+              <span className="font-semibold text-foreground">
                 {Math.round((today.caloriesConsumed / today.caloriesTarget) * 100)}%
               </span>
             </div>
-            <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-3 bg-muted rounded-full overflow-hidden">
               <div
-                className="h-full bg-linear-to-r from-[#06D6A0] to-[#073B4C] transition-all duration-1000 ease-out"
+                className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-1000 ease-out"
                 style={{ width: `${Math.min((today.caloriesConsumed / today.caloriesTarget) * 100, 100)}%` }}
               />
             </div>
-            <div className="flex justify-between text-xs text-gray-500 mt-2">
+            <div className="flex justify-between text-xs text-muted-foreground mt-2">
               <span>0</span>
               <span>Target: {today.caloriesTarget} kcal</span>
             </div>
@@ -146,13 +146,13 @@ export default function DashboardPage() {
         <div className="grid lg:grid-cols-2 gap-6">
           
           {/* Calorie Bar Chart */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
+          <div className="bg-card rounded-xl p-6 shadow-sm border border-border animate-fade-in">
 
             <div className="flex items-center gap-2 mb-6">
               <div className="p-2 bg-primary/10 rounded-lg">
                 <BarChart3 className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Weekly Calories</h3>
+              <h3 className="text-lg font-semibold text-foreground">Weekly Calories</h3>
             </div>
             
             <div className="space-y-3">
@@ -163,21 +163,21 @@ export default function DashboardPage() {
                 return (
                   <div key={day.day}>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600 w-12">{day.day}</span>
-                      <span className="font-medium text-gray-900">{day.consumed} kcal</span>
+                      <span className="text-muted-foreground w-12">{day.day}</span>
+                      <span className="font-medium text-foreground">{day.consumed} kcal</span>
                     </div>
-                    <div className="relative h-8 bg-gray-100 rounded-lg overflow-hidden">
+                    <div className="relative h-8 bg-muted rounded-lg overflow-hidden">
                       <div
                         className={`h-full rounded-lg transition-all duration-700 ease-out ${
                           isOverTarget 
-                            ? 'bg-linear-to-r from-[#EF476F] to-[#FFD166]' 
-                            : 'bg-linear-to-r from-[#06D6A0] to-[#073B4C]'
+                            ? 'bg-gradient-to-r from-destructive to-chart-4' 
+                            : 'bg-gradient-to-r from-primary to-accent'
                         }`}
                         style={{ width: `${percentage}%` }}
                       />
                       {/* Target line */}
                       <div 
-                        className="absolute top-0 bottom-0 w-0.5 bg-gray-400"
+                        className="absolute top-0 bottom-0 w-0.5 bg-muted-foreground"
                         style={{ left: `${(day.target / maxCalories) * 100}%` }}
                       />
                     </div>
@@ -186,30 +186,30 @@ export default function DashboardPage() {
               })}
             </div>
 
-            <div className="mt-4 flex items-center gap-4 text-xs text-gray-500">
+            <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-linear-to-r from-[#06D6A0] to-[#073B4C] rounded"></div>
+                <div className="w-3 h-3 bg-gradient-to-r from-primary to-accent rounded"></div>
                 <span>On track</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-linear-to-r from-[#EF476F] to-[#FFD166] rounded"></div>
+                <div className="w-3 h-3 bg-gradient-to-r from-destructive to-chart-4 rounded"></div>
                 <span>Over target</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-0.5 h-3 bg-gray-400"></div>
+                <div className="w-0.5 h-3 bg-muted-foreground"></div>
                 <span>Target</span>
               </div>
             </div>
           </div>
 
           {/* Weight Line Chart */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
+          <div className="bg-card rounded-xl p-6 shadow-sm border border-border animate-fade-in">
 
             <div className="flex items-center gap-2 mb-6">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <TrendingDown className="w-5 h-5 text-green-600" />
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <TrendingDown className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Weight Trend (7 Days)</h3>
+              <h3 className="text-lg font-semibold text-foreground">Weight Trend (7 Days)</h3>
             </div>
             
             <div className="relative h-48">
@@ -222,7 +222,7 @@ export default function DashboardPage() {
                     y1={y}
                     x2="700"
                     y2={y}
-                    stroke="#f3f4f6"
+                    className="stroke-muted"
                     strokeWidth="1"
                   />
                 ))}
@@ -269,35 +269,33 @@ export default function DashboardPage() {
                       cx={x}
                       cy={y}
                       r="5"
-                      fill="white"
-                      stroke="#06D6A0"
+                      className="fill-card stroke-primary"
                       strokeWidth="2"
-                      className="animate-scale-in"
                     />
                   );
                 })}
 
                 <defs>
                   <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#06D6A0" />
-                    <stop offset="100%" stopColor="#073B4C" />
+                    <stop offset="0%" stopColor="var(--primary)" />
+                    <stop offset="100%" stopColor="var(--accent)" />
                   </linearGradient>
                   <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#06D6A0" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#06D6A0" stopOpacity="0" />
+                    <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.2" />
+                    <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
                   </linearGradient>
                 </defs>
               </svg>
             </div>
 
-            <div className="mt-4 flex justify-between text-xs text-gray-500">
+            <div className="mt-4 flex justify-between text-xs text-muted-foreground">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
                 <span key={day}>{day}</span>
               ))}
             </div>
 
-            <div className="mt-4 p-3 bg-green-50 rounded-lg">
-              <p className="text-sm text-green-800">
+            <div className="mt-4 p-3 bg-primary/10 rounded-lg">
+              <p className="text-sm text-primary">
                 ↓ {Math.abs(weeklyData.weightChange)} kg this week - Great progress!
               </p>
             </div>
@@ -309,43 +307,43 @@ export default function DashboardPage() {
         <div className="grid md:grid-cols-3 gap-6">
           
           {/* Weekly Summary */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
+          <div className="bg-card rounded-xl p-6 shadow-sm border border-border animate-fade-in">
 
             <div className="flex items-center gap-2 mb-4">
               <div className="p-2 bg-primary/10 rounded-lg">
                 <Calendar className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Weekly Summary</h3>
+              <h3 className="text-lg font-semibold text-foreground">Weekly Summary</h3>
             </div>
             
             <div className="space-y-4">
               <div>
-                <div className="text-sm text-gray-600">Avg Daily Calories</div>
-                <div className="text-2xl font-bold bg-linear-to-r from-[#06D6A0] to-[#073B4C] bg-clip-text text-transparent">
+                <div className="text-sm text-muted-foreground">Avg Daily Calories</div>
+                <div className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                   {weeklyData.avgCalories}
                 </div>
               </div>
               
               <div>
-                <div className="text-sm text-gray-600 mb-2">Goal Completion</div>
-                <div className="text-2xl font-bold text-gray-900 mb-2">{weeklyData.goalCompletion}%</div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="text-sm text-muted-foreground mb-2">Goal Completion</div>
+                <div className="text-2xl font-bold text-foreground mb-2">{weeklyData.goalCompletion}%</div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-linear-to-r from-[#06D6A0] to-[#073B4C] transition-all duration-1000 ease-out"
+                    className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-1000 ease-out"
                     style={{ width: `${weeklyData.goalCompletion}%` }}
                   />
                 </div>
               </div>
               
               <div>
-                <div className="text-sm text-gray-600">Active Days</div>
-                <div className="text-2xl font-bold text-gray-900">{weeklyData.daysActive}/7</div>
+                <div className="text-sm text-muted-foreground">Active Days</div>
+                <div className="text-2xl font-bold text-foreground">{weeklyData.daysActive}/7</div>
               </div>
             </div>
           </div>
 
           {/* Streak Counter */}
-          <div className="bg-linear-to-br from-[#FFD166] to-[#EF476F] rounded-xl p-6 shadow-lg text-white animate-fade-in">
+          <div className="bg-gradient-to-br from-chart-4 to-destructive rounded-xl p-6 shadow-lg text-white animate-fade-in">
 
             <div className="flex items-center gap-2 mb-4">
               <div className="p-2 bg-white/20 rounded-lg">
@@ -366,7 +364,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Motivational Insights */}
-          <div className="bg-linear-to-br from-[#073B4C] to-[#118AB2] rounded-xl p-6 shadow-lg text-white animate-fade-in">
+          <div className="bg-gradient-to-br from-accent to-secondary rounded-xl p-6 shadow-lg text-white animate-fade-in">
 
             <div className="flex items-center gap-2 mb-4">
               <div className="p-2 bg-white/20 rounded-lg">

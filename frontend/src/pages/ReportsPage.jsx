@@ -56,21 +56,21 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
+    <div className="min-h-screen bg-background pt-16">
       {/* Header */}
-      <div className="bg-white border-b sticky top-16 z-10">
+      <div className="bg-card border-b border-border sticky top-16 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate('/')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div className="flex items-center gap-2">
-                <BarChart3 className="w-6 h-6 text-[#06D6A0]" />
-                <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
+                <BarChart3 className="w-6 h-6 text-primary" />
+                <h1 className="text-2xl font-bold text-foreground">Reports</h1>
               </div>
             </div>
 
@@ -82,8 +82,8 @@ export default function ReportsPage() {
                   onClick={() => setPeriod(p)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     period === p
-                      ? 'bg-[#06D6A0] text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-primary text-white shadow-sm'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
                   {p === 'week' ? 'Weekly' : 'Monthly'}
@@ -98,7 +98,7 @@ export default function ReportsPage() {
         
         {/* Insights Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-linear-to-br from-[#06D6A0] to-[#073B4C] rounded-xl p-6 text-white animate-fade-in">
+          <div className="bg-linear-to-br from-primary to-accent rounded-xl p-6 text-white animate-fade-in">
             <div className="inline-flex items-center justify-center w-14 h-14 mb-4 rounded-2xl bg-white/20 backdrop-blur-sm">
               <Utensils className="w-7 h-7" />
             </div>
@@ -114,7 +114,7 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <div className="bg-linear-to-br from-[#FFD166] to-[#EF476F] rounded-xl p-6 text-white animate-fade-in delay-100">
+          <div className="bg-linear-to-br from-chart-4 to-destructive rounded-xl p-6 text-white animate-fade-in delay-100">
             <div className="inline-flex items-center justify-center w-14 h-14 mb-4 rounded-2xl bg-white/20 backdrop-blur-sm">
               <Scale className="w-7 h-7" />
             </div>
@@ -135,7 +135,7 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <div className="bg-linear-to-br from-[#073B4C] to-[#118AB2] rounded-xl p-6 text-white animate-fade-in delay-200">
+          <div className="bg-linear-to-br from-accent to-secondary rounded-xl p-6 text-white animate-fade-in delay-200">
             <div className="inline-flex items-center justify-center w-14 h-14 mb-4 rounded-2xl bg-white/20 backdrop-blur-sm">
               <Target className="w-7 h-7" />
             </div>
@@ -156,7 +156,7 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <div className="bg-linear-to-br from-[#118AB2] to-[#06D6A0] rounded-xl p-6 text-white animate-fade-in delay-300">
+          <div className="bg-linear-to-br from-secondary to-primary rounded-xl p-6 text-white animate-fade-in delay-300">
             <div className="inline-flex items-center justify-center w-14 h-14 mb-4 rounded-2xl bg-white/20 backdrop-blur-sm">
               <Flame className="w-7 h-7" />
             </div>
@@ -179,12 +179,12 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* Calories Chart */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-slide-in-left delay-400">
+          <div className="bg-card rounded-xl p-6 shadow-sm border border-border animate-slide-in-left delay-400">
             <div className="flex items-center gap-3 mb-4">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#06D6A0]/10">
-                <TrendingUp className="w-5 h-5 text-[#06D6A0]" />
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10">
+                <TrendingUp className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Calories Consumed vs Target</h3>
+              <h3 className="text-lg font-semibold text-foreground">Calories Consumed vs Target</h3>
             </div>
             
             <div className="space-y-3">
@@ -196,15 +196,15 @@ export default function ReportsPage() {
                 return (
                   <div key={day}>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">{day}</span>
-                      <span className="font-medium text-gray-900">{consumed} kcal</span>
+                      <span className="text-muted-foreground">{day}</span>
+                      <span className="font-medium text-foreground">{consumed} kcal</span>
                     </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all duration-500 ease-out ${
-                          percentage > 110 ? 'bg-red-500' :
-                          percentage > 90 ? 'bg-[#06D6A0]' :
-                          'bg-[#FFD166]'
+                          percentage > 110 ? 'bg-destructive' :
+                          percentage > 90 ? 'bg-primary' :
+                          'bg-chart-4'
                         }`}
                         style={{ 
                           width: `${Math.min(percentage, 100)}%`,
@@ -217,29 +217,29 @@ export default function ReportsPage() {
               })}
             </div>
 
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg flex items-center gap-4 text-sm">
+            <div className="mt-4 p-3 bg-muted rounded-lg flex items-center gap-4 text-sm">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-[#06D6A0] rounded-full"></div>
-                <span className="text-gray-600">On track</span>
+                <div className="w-3 h-3 bg-primary rounded-full"></div>
+                <span className="text-muted-foreground">On track</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-[#FFD166] rounded-full"></div>
-                <span className="text-gray-600">Under target</span>
+                <div className="w-3 h-3 bg-chart-4 rounded-full"></div>
+                <span className="text-muted-foreground">Under target</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <span className="text-gray-600">Over target</span>
+                <div className="w-3 h-3 bg-destructive rounded-full"></div>
+                <span className="text-muted-foreground">Over target</span>
               </div>
             </div>
           </div>
 
           {/* Weight Trend Chart */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-slide-in-right delay-400">
+          <div className="bg-card rounded-xl p-6 shadow-sm border border-border animate-slide-in-right delay-400">
             <div className="flex items-center gap-3 mb-4">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#073B4C]/10">
-                <Scale className="w-5 h-5 text-[#073B4C]" />
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-accent/10">
+                <Scale className="w-5 h-5 text-accent" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Weight Trend</h3>
+              <h3 className="text-lg font-semibold text-foreground">Weight Trend</h3>
             </div>
             
             <div className="relative h-48 flex items-end justify-between gap-2">
@@ -251,24 +251,24 @@ export default function ReportsPage() {
                 return (
                   <div key={i} className="flex-1 flex flex-col items-center gap-2">
                     <div
-                      className="w-full bg-linear-to-t from-[#073B4C] to-[#06D6A0] rounded-t-lg relative group transition-all duration-500 ease-out"
+                      className="w-full bg-linear-to-t from-accent to-primary rounded-t-lg relative group transition-all duration-500 ease-out"
                       style={{ 
                         height: `${height}%`,
                         transitionDelay: `${600 + i * 50}ms`
                       }}
                     >
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-foreground text-background text-xs px-2 py-1 rounded whitespace-nowrap">
                         {weight} kg
                       </div>
                     </div>
-                    <span className="text-xs text-gray-500">{data.days[i]}</span>
+                    <span className="text-xs text-muted-foreground">{data.days[i]}</span>
                   </div>
                 );
               })}
             </div>
 
-            <div className="mt-6 p-3 bg-green-50 rounded-lg text-center">
-              <p className="text-green-800 font-medium flex items-center justify-center gap-1">
+            <div className="mt-6 p-3 bg-primary/10 rounded-lg text-center">
+              <p className="text-primary font-medium flex items-center justify-center gap-1">
                 {data.insights.weightChange < 0 ? (
                   <TrendingDown className="w-4 h-4" />
                 ) : (
@@ -276,7 +276,7 @@ export default function ReportsPage() {
                 )}
                 {Math.abs(data.insights.weightChange)} kg this week
               </p>
-              <p className="text-sm text-green-600 mt-1">
+              <p className="text-sm text-primary/80 mt-1">
                 {data.insights.weightChange < 0 
                   ? 'You\'re making great progress!' 
                 : 'Keep up the good work!'}
@@ -287,17 +287,17 @@ export default function ReportsPage() {
         </div>
 
         {/* Export Section */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in delay-400">
+        <div className="bg-card rounded-xl p-6 shadow-sm border border-border animate-fade-in delay-400">
           <div className="flex items-center gap-3 mb-4">
-            <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#073B4C]/10">
-              <FileText className="w-5 h-5 text-[#073B4C]" />
+            <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-accent/10">
+              <FileText className="w-5 h-5 text-accent" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">Export Data</h3>
+            <h3 className="text-lg font-semibold text-foreground">Export Data</h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <button
               onClick={() => setShowExportModal(true)}
-              className="py-3 bg-[#073B4C] text-white rounded-lg font-medium hover:bg-[#0a4d61] transition-colors flex items-center justify-center gap-2"
+              className="py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent/90 transition-colors flex items-center justify-center gap-2"
             >
               <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/20">
                 <FileSpreadsheet className="w-4 h-4" />
@@ -307,7 +307,7 @@ export default function ReportsPage() {
             
             <button
               onClick={() => handleExport('pdf')}
-              className="py-3 bg-[#EF476F] text-white rounded-lg font-medium hover:bg-[#d63b5f] transition-colors flex items-center justify-center gap-2"
+              className="py-3 bg-destructive text-white rounded-lg font-medium hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2"
             >
               <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/20">
                 <FileText className="w-4 h-4" />
@@ -317,7 +317,7 @@ export default function ReportsPage() {
             
             <button
               onClick={handleEmailReport}
-              className="py-3 bg-[#06D6A0] text-white rounded-lg font-medium hover:bg-[#05c28f] transition-colors flex items-center justify-center gap-2"
+              className="py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
             >
               <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/20">
                 <Mail className="w-4 h-4" />
@@ -326,7 +326,7 @@ export default function ReportsPage() {
             </button>
           </div>
 
-          <p className="text-sm text-gray-500 mt-4 text-center">
+          <p className="text-sm text-muted-foreground mt-4 text-center">
             Your data includes nutrition logs, workout history, and progress metrics
           </p>
         </div>
@@ -336,38 +336,38 @@ export default function ReportsPage() {
       {/* Export Modal */}
       {showExportModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full animate-scale-in">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Export to CSV</h3>
+          <div className="bg-card rounded-xl p-6 max-w-md w-full animate-scale-in">
+            <h3 className="text-xl font-bold text-foreground mb-4">Export to CSV</h3>
             
             <div className="space-y-3 mb-6">
-              <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                <input type="checkbox" defaultChecked className="w-4 h-4 text-[#06D6A0]" />
-                <span className="text-gray-700">Nutrition data</span>
+              <label className="flex items-center gap-3 p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
+                <input type="checkbox" defaultChecked className="w-4 h-4 accent-primary" />
+                <span className="text-foreground">Nutrition data</span>
               </label>
-              <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                <input type="checkbox" defaultChecked className="w-4 h-4 text-[#06D6A0]" />
-                <span className="text-gray-700">Workout logs</span>
+              <label className="flex items-center gap-3 p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
+                <input type="checkbox" defaultChecked className="w-4 h-4 accent-primary" />
+                <span className="text-foreground">Workout logs</span>
               </label>
-              <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                <input type="checkbox" defaultChecked className="w-4 h-4 text-[#06D6A0]" />
-                <span className="text-gray-700">Weight history</span>
+              <label className="flex items-center gap-3 p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
+                <input type="checkbox" defaultChecked className="w-4 h-4 accent-primary" />
+                <span className="text-foreground">Weight history</span>
               </label>
-              <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                <input type="checkbox" className="w-4 h-4 text-[#06D6A0]" />
-                <span className="text-gray-700">Progress photos</span>
+              <label className="flex items-center gap-3 p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
+                <input type="checkbox" className="w-4 h-4 accent-primary" />
+                <span className="text-foreground">Progress photos</span>
               </label>
             </div>
             
             <div className="flex gap-3">
               <button
                 onClick={() => setShowExportModal(false)}
-                className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                className="flex-1 py-3 bg-muted text-foreground rounded-lg font-medium hover:bg-muted/80 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleExport('csv')}
-                className="flex-1 py-3 bg-[#06D6A0] text-white rounded-lg font-medium hover:bg-[#05c28f] transition-colors"
+                className="flex-1 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
               >
                 Download
               </button>

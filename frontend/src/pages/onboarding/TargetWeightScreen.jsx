@@ -109,26 +109,26 @@ const TargetWeightScreen = ({ onNext, onBack, onSkip, initialValue = {}, current
                     {weightDiff !== null && targetWeight && (
                         <div className={`rounded-xl p-4 mb-6 text-center animate-fade-in ${
                                 weightDiff > 0
-                                    ? 'bg-red-50 border border-red-200'
+                                    ? 'bg-destructive/10 border border-destructive/30'
                                     : weightDiff < 0
-                                    ? 'bg-green-50 border border-green-200'
-                                    : 'bg-blue-50 border border-blue-200'
+                                    ? 'bg-primary/10 border border-primary/30'
+                                    : 'bg-secondary/10 border border-secondary/30'
                             }`}
                         >
                             <p className="text-sm text-text-secondary mb-1">Goal</p>
                             <p className="text-2xl font-bold">
                                 {weightDiff > 0 && (
-                                    <span className="text-red-600">
+                                    <span className="text-destructive">
                                         Lose {Math.abs(weightDiff).toFixed(1)} {unit}
                                     </span>
                                 )}
                                 {weightDiff < 0 && (
-                                    <span className="text-green-600">
+                                    <span className="text-primary">
                                         Gain {Math.abs(weightDiff).toFixed(1)} {unit}
                                     </span>
                                 )}
                                 {weightDiff === 0 && (
-                                    <span className="text-blue-600">Maintain Weight</span>
+                                    <span className="text-secondary">Maintain Weight</span>
                                 )}
                             </p>
                         </div>

@@ -171,8 +171,8 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
                                         onClick={() => toggleAllergy(allergy.value)}
                                         className={`relative p-3 rounded-xl border-2 transition-all hover:scale-105 active:scale-95 animate-fade-in ${
                                             allergies.includes(allergy.value)
-                                                ? 'border-red-500 bg-red-50 shadow-md'
-                                                : 'border-border bg-bg hover:border-red-300'
+                                                ? 'border-destructive bg-destructive/10 shadow-md'
+                                                : 'border-border bg-bg hover:border-destructive/50'
                                         }`}
                                         style={{ animationDelay: `${300 + index * 50}ms` }}
                                     >
@@ -183,7 +183,7 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
                                             {allergy.label}
                                         </p>
                                         {allergies.includes(allergy.value) && (
-                                            <div className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center animate-scale-in">
+                                            <div className="absolute top-2 right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center animate-scale-in">
                                                 <Check className="w-3 h-3" />
                                             </div>
                                         )}

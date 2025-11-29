@@ -27,9 +27,10 @@ const CompletionScreen = ({ userData }) => {
                     {[...Array(8)].map((_, i) => (
                         <div
                             key={i}
-                            className="absolute top-1/2 left-1/2 w-4 h-4 rounded-full animate-ping"
+                            className={`absolute top-1/2 left-1/2 w-4 h-4 rounded-full animate-ping ${
+                                ['bg-primary', 'bg-chart-4', 'bg-destructive', 'bg-secondary'][i % 4]
+                            }`}
                             style={{
-                                backgroundColor: ['#06D6A0', '#FFD166', '#EF476F', '#118AB2'][i % 4],
                                 animationDelay: `${i * 100}ms`,
                                 transform: `translate(-50%, -50%) translate(${Math.cos(i * 45 * Math.PI / 180) * 50}px, ${Math.sin(i * 45 * Math.PI / 180) * 50}px)`,
                             }}
