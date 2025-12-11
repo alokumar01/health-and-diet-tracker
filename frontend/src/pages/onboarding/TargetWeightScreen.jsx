@@ -99,17 +99,17 @@ const TargetWeightScreen = ({ onNext, onBack, currentWeight }) => {
                             <p className="text-sm text-text-secondary mb-1">Goal</p>
                             <p className="text-2xl font-bold">
                                 {weightDiff > 0 && (
-                                    <span className="text-red-600">
+                                    <span className="text-destructive">
                                         Lose {Math.abs(weightDiff).toFixed(1)} {unit}
                                     </span>
                                 )}
                                 {weightDiff < 0 && (
-                                    <span className="text-green-600">
+                                    <span className="text-primary">
                                         Gain {Math.abs(weightDiff).toFixed(1)} {unit}
                                     </span>
                                 )}
                                 {weightDiff === 0 && (
-                                    <span className="text-blue-600">Maintain Weight</span>
+                                    <span className="text-secondary">Maintain Weight</span>
                                 )}
                             </p>
                         </div>

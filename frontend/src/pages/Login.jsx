@@ -64,12 +64,12 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-linear-to-br from-[#073B4C]/5 via-white to-[#06D6A0]/5 flex items-center justify-center px-4 relative">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-accent/5 via-background to-primary/5 flex items-center justify-center px-4 relative">
       {/* Back to Home - Top Left */}
       <div className="absolute top-6 left-6 z-10 animate-slide-in-left">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-[#073B4C] transition-colors group"
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           <span className="font-medium">Back to Home</span>
@@ -80,20 +80,20 @@ const Login = () => {
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4 animate-scale-in">
-            <div className="bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
-              <Logo height={48} width={48} className="fill-[#073B4C]" />
+            <div className="bg-card p-4 rounded-2xl shadow-lg border border-border">
+              <Logo height={48} width={48} className="fill-primary" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 animate-fade-in delay-100">
+          <h1 className="text-3xl font-bold text-foreground mb-2 animate-fade-in delay-100">
             Welcome Back
           </h1>
-          <p className="text-gray-600 animate-fade-in delay-200">
+          <p className="text-muted-foreground animate-fade-in delay-200">
             Login to continue your fitness journey
           </p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8 animate-fade-in delay-300">
+        <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-xl border border-border p-8 animate-fade-in delay-300">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div>

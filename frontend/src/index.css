@@ -1,100 +1,131 @@
 @import 'tailwindcss';
 @import "tw-animate-css";
 
+/* ========================================
+   CSS VARIABLES - LIGHT THEME
+   ======================================== */
 :root {
-  --background: oklch(0.95 0.01 196.81);
-  --foreground: oklch(0.38 0.06 211.49);
-  --card: oklch(0.97 0.01 196.81);
-  --card-foreground: oklch(0.38 0.06 211.49);
-  --popover: oklch(0.97 0.01 196.81);
-  --popover-foreground: oklch(0.38 0.06 211.49);
-  --primary: oklch(0.72 0.12 210.36);
-  --primary-foreground: oklch(1.00 0 0);
-  --secondary: oklch(0.97 0.01 247.91);
-  --secondary-foreground: oklch(0.14 0 0);
-  --muted: oklch(0.97 0.01 247.91);
-  --muted-foreground: oklch(0.55 0.04 256.40);
-  --accent: oklch(0.96 0.02 204.34);
-  --accent-foreground: oklch(0.57 0.10 213.73);
-  --destructive: oklch(0.64 0.21 25.39);
-  --border: oklch(0.93 0.01 256.71);
-  --input: oklch(0.93 0.01 256.71);
-  --ring: oklch(0.72 0.12 210.36);
-  --chart-1: oklch(0.72 0.12 210.36);
-  --chart-2: oklch(0.57 0.10 213.73);
-  --chart-3: oklch(0.79 0.12 209.45);
-  --chart-4: oklch(0.76 0.11 208.70);
-  --chart-5: oklch(0.83 0.10 208.33);
-  --sidebar: oklch(0.98 0 0);
-  --sidebar-foreground: oklch(0.14 0 0);
-  --sidebar-primary: oklch(0.72 0.12 210.36);
-  --sidebar-primary-foreground: oklch(1.00 0 0);
-  --sidebar-accent: oklch(0.96 0.02 204.34);
-  --sidebar-accent-foreground: oklch(0.57 0.10 213.73);
-  --sidebar-border: oklch(0.93 0.01 256.71);
-  --sidebar-ring: oklch(0.72 0.12 210.36);
+  /* Brand Colors */
+  --primary: #06D6A0;
+  --primary-foreground: #ffffff;
+  --secondary: #118AB2;
+  --secondary-foreground: #ffffff;
+  --accent: #073B4C;
+  --accent-foreground: #ffffff;
+  --destructive: #EF476F;
 
+  /* Background & Surface */
+  --background: #f8fafc;
+  --foreground: #073B4C;
+  --card: #ffffff;
+  --card-foreground: #073B4C;
+  --popover: #ffffff;
+  --popover-foreground: #073B4C;
+
+  /* UI Elements */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #06D6A0;
+
+  /* Chart Colors */
+  --chart-1: #06D6A0;
+  --chart-2: #118AB2;
+  --chart-3: #EF476F;
+  --chart-4: #FFD166;
+  --chart-5: #073B4C;
+
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #073B4C;
+  --sidebar-primary: #06D6A0;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #073B4C;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #06D6A0;
+
+  /* Typography */
   --font-sans: Inter, sans-serif;
   --font-serif: Lora, serif;
-  --font-mono: Roboto Mono, monospace;
+  --font-mono: 'Roboto Mono', monospace;
 
+  /* Spacing & Radius */
   --radius: 0.5rem;
 
-  --shadow-2xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
-  --shadow-xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
-  --shadow-sm: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 1px 2px -1px oklch(0.00 0 0 / 0.10);
-  --shadow: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 1px 2px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-md: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 2px 4px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-lg: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 4px 6px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-xl: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 8px 10px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-2xl: 0 1px 3px 0px oklch(0.00 0 0 / 0.25);
-
+  /* Shadows */
+  --shadow-2xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
 }
 
+/* ========================================
+   CSS VARIABLES - DARK THEME
+   ======================================== */
 .dark {
-  --background: oklch(0.21 0.02 226.02);
-  --foreground: oklch(0.85 0.13 194.97);
-  --card: oklch(0.23 0.03 218.18);
-  --card-foreground: oklch(0.85 0.13 194.97);
-  --popover: oklch(0.23 0.03 218.18);
-  --popover-foreground: oklch(0.85 0.13 194.97);
-  --primary: oklch(0.72 0.12 210.36);
-  --primary-foreground: oklch(1.00 0 0);
-  --secondary: oklch(0.27 0.01 285.81);
-  --secondary-foreground: oklch(0.97 0 0);
-  --muted: oklch(0.24 0 0);
-  --muted-foreground: oklch(0.71 0.01 286.23);
-  --accent: oklch(0.24 0 0);
-  --accent-foreground: oklch(0.97 0 0);
-  --destructive: oklch(0.64 0.21 25.39);
-  --border: oklch(0.29 0 0);
-  --input: oklch(0.29 0 0);
-  --ring: oklch(0.72 0.12 210.36);
-  --chart-1: oklch(0.72 0.12 210.36);
-  --chart-2: oklch(0.79 0.12 209.45);
-  --chart-3: oklch(0.76 0.11 208.70);
-  --chart-4: oklch(0.83 0.10 208.33);
-  --chart-5: oklch(0.57 0.10 213.73);
-  --sidebar: oklch(0.19 0 0);
-  --sidebar-foreground: oklch(0.97 0 0);
-  --sidebar-primary: oklch(0.72 0.12 210.36);
-  --sidebar-primary-foreground: oklch(1.00 0 0);
-  --sidebar-accent: oklch(0.24 0 0);
-  --sidebar-accent-foreground: oklch(0.97 0 0);
-  --sidebar-border: oklch(0.29 0 0);
-  --sidebar-ring: oklch(0.72 0.12 210.36);
+  /* Brand Colors (same in dark mode) */
+  --primary: #06D6A0;
+  --primary-foreground: #ffffff;
+  --secondary: #118AB2;
+  --secondary-foreground: #ffffff;
+  --accent: #073b4c;
+  --accent-foreground: #ffffff;
+  --destructive: #EF476F;
 
-  --shadow-2xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
-  --shadow-xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
-  --shadow-sm: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 1px 2px -1px oklch(0.00 0 0 / 0.10);
-  --shadow: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 1px 2px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-md: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 2px 4px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-lg: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 4px 6px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-xl: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 8px 10px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-2xl: 0 1px 3px 0px oklch(0.00 0 0 / 0.25);
+  /* Background & Surface */
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card: #1e293b;
+  --card-foreground: #f1f5f9;
+  --popover: #1e293b;
+  --popover-foreground: #f1f5f9;
+
+  /* UI Elements */
+  --muted: #334155;
+  --muted-foreground: #94a3b8;
+  --border: #334155;
+  --input: #334155;
+  --ring: #06D6A0;
+
+  /* Chart Colors */
+  --chart-1: #06D6A0;
+  --chart-2: #118AB2;
+  --chart-3: #EF476F;
+  --chart-4: #FFD166;
+  --chart-5: #f1f5f9;
+
+  /* Sidebar */
+  --sidebar: #1e293b;
+  --sidebar-foreground: #f1f5f9;
+  --sidebar-primary: #06D6A0;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #334155;
+  --sidebar-accent-foreground: #f1f5f9;
+  --sidebar-border: #334155;
+  --sidebar-ring: #06D6A0;
+
+  /* Shadows */
+  --shadow-2xs: 0 1px 2px 0 rgb(0 0 0 / 0.1);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.1);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.2);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.4);
 }
 
+/* ========================================
+   TAILWIND THEME MAPPINGS
+   ======================================== */
 @theme inline {
+  /* Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -113,11 +144,15 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* Chart Colors */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
+  /* Sidebar */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -127,15 +162,24 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Legacy App Color Aliases */
+  --color-bg: var(--background);
+  --color-surface: var(--card);
+  --color-text: var(--foreground);
+  --color-text-secondary: var(--muted-foreground);
+
+  /* Typography */
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
 
+  /* Border Radius */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
+  /* Shadows */
   --shadow-2xs: var(--shadow-2xs);
   --shadow-xs: var(--shadow-xs);
   --shadow-sm: var(--shadow-sm);
@@ -146,87 +190,84 @@
   --shadow-2xl: var(--shadow-2xl);
 }
 
-/* Add these animation utilities - optimized for smoother transitions */
+/* ========================================
+   BASE STYLES
+   ======================================== */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Page transition container */
+.min-h-dvh > div {
+  animation: fade-in 0.15s ease-out;
+}
+
+/* ========================================
+   KEYFRAME ANIMATIONS
+   ======================================== */
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
 @keyframes slide-in-left {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-in-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bounce-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes draw-line {
+  from { stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+  to { stroke-dasharray: 1000; stroke-dashoffset: 0; }
+}
+
+/* ========================================
+   ANIMATION UTILITY CLASSES
+   ======================================== */
 .animate-fade-in {
   animation: fade-in 0.2s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.2s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.2s ease-out forwards;
 }
 
 .animate-slide-in-down {
   animation: slide-in-down 0.2s ease-out forwards;
 }
 
-.delay-100 {
-  animation-delay: 100ms;
+.animate-scale-in {
+  animation: scale-in 0.15s ease-out forwards;
 }
 
-.delay-200 {
-  animation-delay: 200ms;
-}
-
-.delay-300 {
-  animation-delay: 300ms;
-}
-
-.delay-400 {
-  animation-delay: 400ms;
-}
-
-/* Onboarding animation delays - optimized */
-.animate-fade-in-delay-1 {
-  animation: fadeIn 0.2s ease-out;
-  animation-delay: 0.05s;
-}
-
-.animate-fade-in-delay-2 {
-  animation: fadeIn 0.2s ease-out;
-  animation-delay: 0.1s;
-}
-
-.animate-fade-in-delay-3 {
-  animation: fadeIn 0.2s ease-out;
-  animation-delay: 0.15s;
-}
-
-.animate-fade-in-delay-4 {
-  animation: fadeIn 0.2s ease-out;
-  animation-delay: 0.2s;
-}
-
-.animate-fade-in-delay-5 {
-  animation: fadeIn 0.2s ease-out;
-  animation-delay: 0.25s;
-}
-
-.animate-fade-in-delay-6 {
-  animation: fadeIn 0.2s ease-out;
-  animation-delay: 0.3s;
-}
-
-@keyframes draw-line {
-  from {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-  }
-  to {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 0;
-  }
+.animate-bounce-in {
+  animation: bounce-in 0.2s ease-out forwards;
 }
 
 .animate-draw-line {
@@ -234,113 +275,20 @@
   animation: draw-line 1.5s ease-out 0.3s forwards;
 }
 
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  transition: background-color 0.3s, color 0.3s;
-}
+/* ========================================
+   ANIMATION DELAYS
+   ======================================== */
+.delay-50  { animation-delay: 50ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
 
-/* Smooth page transitions */
-.min-h-dvh > div {
-  animation: pageEnter 0.15s ease-out;
-}
-
-@keyframes pageEnter {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Simple fade-in animation - optimized for faster, smoother transitions */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.2s ease-out;
-  opacity: 1;
-}
-
-@keyframes scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-scale-in {
-  animation: scale-in 0.15s ease-out forwards;
-}
-
-@keyframes slide-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.animate-slide-in-right {
-  animation: slide-in-right 0.2s ease-out forwards;
-}
-
-@keyframes bounce-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-bounce-in {
-  animation: bounce-in 0.2s ease-out forwards;
-}
-
-@keyframes slide-in-down {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-in-down {
-  animation: slide-in-down 0.2s ease-out forwards;
-}
-
-.delay-100 {
-  animation-delay: 100ms;
-}
-
-.delay-200 {
-  animation-delay: 200ms;
-}
-
-.delay-300 {
-  animation-delay: 300ms;
-}
-
-.delay-400 {
-  animation-delay: 400ms;
-}
+/* Onboarding sequential delays */
+.animate-fade-in-delay-1 { animation: fade-in 0.2s ease-out 0.05s forwards; }
+.animate-fade-in-delay-2 { animation: fade-in 0.2s ease-out 0.1s forwards; }
+.animate-fade-in-delay-3 { animation: fade-in 0.2s ease-out 0.15s forwards; }
+.animate-fade-in-delay-4 { animation: fade-in 0.2s ease-out 0.2s forwards; }
+.animate-fade-in-delay-5 { animation: fade-in 0.2s ease-out 0.25s forwards; }
+.animate-fade-in-delay-6 { animation: fade-in 0.2s ease-out 0.3s forwards; }
