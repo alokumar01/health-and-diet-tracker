@@ -10,10 +10,10 @@ export default function ProtectedRoute({ children }) {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   // return isAuthenticated ? children : <Navigate to="/login" />;
 
-  // onboarding check
-  if (!user?.hasCompletedOnboarding) {
-    return <Navigate to="/onboarding" replace />;
-  }
+  // // onboarding check
+  // if (!user?.hasCompletedOnboarding) {
+  //   return <Navigate to="/onboarding" replace />;
+  // }
 
   return children;
 }

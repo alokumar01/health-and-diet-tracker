@@ -115,7 +115,7 @@ const AddFoodPage = () => {
     }, [searchQuery]);
 
     const handleAddFood = (food) => {
-        console.log('Adding food:', food, 'to meal:', selectedMealType);
+        
         // Add to backend/state
         navigate('/nutrition');
     };

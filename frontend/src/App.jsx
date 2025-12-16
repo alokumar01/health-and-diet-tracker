@@ -72,6 +72,7 @@ function App() {
               
               <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              {/* changing needed */}
               <Route 
                 path="/onboarding" 
                 element={

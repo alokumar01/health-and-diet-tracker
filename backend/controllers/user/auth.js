@@ -200,8 +200,8 @@ const login = async (req, res, next) => {
 
         res.cookie("session_token", sessionToken, {
             httpOnly: true,
-            secure: config.NODE_ENV === "production",
-            sameSite: "Strict",
+            secure: false,
+            sameSite: "none",
             maxAge: 30 * 24 * 60 * 60 * 1000,
         });
 
@@ -359,6 +359,7 @@ const refreshToken = async (req, res, next) => {
         }
 
         const accessToken = jwt.sign({ userId: decoded.userId }, config.JWT_SECRET, { expiresIn: "10m" });
+
 
         res.status(200).json({
             success: true,

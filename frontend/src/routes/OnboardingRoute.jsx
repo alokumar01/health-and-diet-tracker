@@ -7,7 +7,7 @@ export default function OnboardingRoute({ children }) {
 
     if (loading) return <Spinner />
 
-    if (user?.hasCompletedOnboarding) {
+    if (!user?.hasCompletedOnboarding) {
         return <Navigate to="/dashboard" replace />
     }
 

@@ -8,16 +8,6 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-// cors
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173",
-//     credentials: true,
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//   })
-// );
-
-
 app.use(cors({
   origin: true,
   credentials: true
@@ -25,12 +15,6 @@ app.use(cors({
 
 app.use(cookieParser());
 
-// app.options("*", cors());
-
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Credentials", "true");
-//   next();
-// });
 
 // Middleware
 app.use(express.json());
