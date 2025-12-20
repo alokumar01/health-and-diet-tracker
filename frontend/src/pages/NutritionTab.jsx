@@ -1,97 +1,172 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Settings, 
   Plus, 
-  Edit2, 
   Trash2,
   UtensilsCrossed,
-  Sunrise,
-  Sun,
-  Moon,
-  Cookie,
+  Coffee,
+  Salad,
+  Apple,
   Beef,
   Wheat,
-  Droplet
+  Droplet,
+  Loader2,
+  RefreshCw,
+  TrendingUp
 } from 'lucide-react';
+import { foodApi } from '../api/foodApi';
+import authApi from '../api/authApi';
+import { toast } from 'sonner';
 
 const NutritionTab = () => {
     const [selectedMeal, setSelectedMeal] = useState('all');
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [todaysFoods, setTodaysFoods] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
-    // Mock data - replace with actual data from backend
-    const userData = {
-        targetCalories: 1780,
-        consumedCalories: 1245,
-        targetProtein: 133,
-        consumedProtein: 89,
-        targetCarbs: 178,
-        consumedCarbs: 142,
-        targetFats: 59,
-        consumedFats: 38,
+    // Fetch user profile and today's foods
+    useEffect(() => {
+        fetchData();
+    }, [selectedDate]);
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            
+            // Fetch user profile for targets
+            const profileResponse = await authApi.getMe();
+            const user = profileResponse.data.data;
+            
+            // Fetch today's foods
+            const foodsResponse = await foodApi.getFoodByDate(selectedDate);
+            const foods = foodsResponse.data.foods || [];
+            
+            setUserData(user);
+            setTodaysFoods(foods);
+        } catch (error) {
+            console.error('Error fetching nutrition data:', error);
+            toast.error('Failed to load nutrition data');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const todaysMeals = [
-        {
-            id: 1,
-            type: 'breakfast',
-            time: '08:30',
-            items: [
-                { name: 'Oatmeal with Berries', quantity: '1 bowl', calories: 320, protein: 12, carbs: 58, fats: 6 },
-                { name: 'Greek Yogurt', quantity: '200g', calories: 140, protein: 20, carbs: 8, fats: 4 },
-                { name: 'Orange Juice', quantity: '250ml', calories: 110, protein: 2, carbs: 26, fats: 0 },
-            ],
-        },
-        {
-            id: 2,
-            type: 'lunch',
-            time: '13:15',
-            items: [
-                { name: 'Grilled Chicken Breast', quantity: '150g', calories: 248, protein: 47, carbs: 0, fats: 5 },
-                { name: 'Brown Rice', quantity: '1 cup', calories: 218, protein: 5, carbs: 46, fats: 2 },
-                { name: 'Mixed Vegetables', quantity: '200g', calories: 80, protein: 3, carbs: 16, fats: 1 },
-            ],
-        },
-        {
-            id: 3,
-            type: 'snacks',
-            time: '16:00',
-            items: [
-                { name: 'Protein Bar', quantity: '1 bar', calories: 200, protein: 20, carbs: 22, fats: 8 },
-            ],
-        },
-    ];
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        await fetchData();
+        setRefreshing(false);
+        toast.success('Data refreshed!');
+    };
 
-    const mealTypes = [
-        { value: 'all', label: 'All Meals', icon: UtensilsCrossed, color: '#073B4C', count: 9 },
-        { value: 'breakfast', label: 'Breakfast', icon: Sunrise, color: '#FFD166', count: 3 },
-        { value: 'lunch', label: 'Lunch', icon: Sun, color: '#06D6A0', count: 3 },
-        { value: 'dinner', label: 'Dinner', icon: Moon, color: '#118AB2', count: 0 },
-        { value: 'snacks', label: 'Snacks', icon: Cookie, color: '#EF476F', count: 1 },
-    ];
+    const handleDeleteFood = async (foodId) => {
+        try {
+            await foodApi.deleteFood(foodId);
+            toast.success('Food item deleted');
+            fetchData(); // Refresh the list
+        } catch (error) {
+            console.error('Error deleting food:', error);
+            toast.error('Failed to delete food item');
+        }
+    };
 
-    const calorieProgress = (userData.consumedCalories / userData.targetCalories) * 100;
-    const proteinProgress = (userData.consumedProtein / userData.targetProtein) * 100;
-    const carbsProgress = (userData.consumedCarbs / userData.targetCarbs) * 100;
-    const fatsProgress = (userData.consumedFats / userData.targetFats) * 100;
+    // Calculate totals and macros from actual food data
+    const calculateNutrition = () => {
+        const totals = todaysFoods.reduce((acc, food) => ({
+            calories: acc.calories + ((food.calories * (food.quantity || 1)) / 100),
+            protein: acc.protein + ((food.protein * (food.quantity || 1)) / 100),
+            carbs: acc.carbs + ((food.carbs * (food.quantity || 1)) / 100),
+            fats: acc.fats + ((food.fats * (food.quantity || 1)) / 100),
+        }), { calories: 0, protein: 0, carbs: 0, fats: 0 });
 
-    const getFilteredMeals = () => {
-        if (selectedMeal === 'all') return todaysMeals;
-        return todaysMeals.filter(meal => meal.type === selectedMeal);
+        // Calculate targets from user profile
+        const calorieTarget = userData?.goals?.calorieGoal || 2000;
+        const proteinTarget = Math.round(calorieTarget * 0.3 / 4); // 30% of calories, 4 cal/g
+        const carbsTarget = Math.round(calorieTarget * 0.4 / 4); // 40% of calories, 4 cal/g
+        const fatsTarget = Math.round(calorieTarget * 0.3 / 9); // 30% of calories, 9 cal/g
+
+        return {
+            consumed: totals,
+            targets: {
+                calories: calorieTarget,
+                protein: proteinTarget,
+                carbs: carbsTarget,
+                fats: fatsTarget,
+            }
+        };
+    };
+
+    // Group foods by meal type
+    const groupFoodsByMeal = () => {
+        const grouped = {
+            breakfast: [],
+            lunch: [],
+            dinner: [],
+            snacks: []
+        };
+
+        todaysFoods.forEach(food => {
+            const mealType = food.mealType || 'snacks';
+            if (grouped[mealType]) {
+                grouped[mealType].push(food);
+            }
+        });
+
+        return grouped;
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-bg pb-20 pt-16 flex items-center justify-center">
+                <div className="text-center">
+                    <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+                    <p className="text-text-secondary">Loading nutrition data...</p>
+                </div>
+            </div>
+        );
+    }
+
+    const nutrition = calculateNutrition();
+    const mealGroups = groupFoodsByMeal();
+    
+    const calorieProgress = (nutrition.consumed.calories / nutrition.targets.calories) * 100;
+
+    const getFilteredFoods = () => {
+        if (selectedMeal === 'all') return todaysFoods;
+        return mealGroups[selectedMeal] || [];
+    };
+
+    const getFormattedDate = () => {
+        const date = new Date(selectedDate);
+        return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
     };
 
     return (
         <div className="min-h-screen bg-bg pb-20 pt-16">
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary to-accent text-white px-4 pt-6 pb-8">
+            <div className="bg-linear-to-r from-primary to-accent text-white px-4 pt-6 pb-8">
                 <div className="max-w-6xl mx-auto">
                     <div className="flex items-center justify-between mb-6">
                         <div className="animate-fade-in">
                             <h1 className="text-3xl font-bold mb-1">Nutrition Tracker</h1>
-                            <p className="text-white/80">Thursday, Nov 21, 2025</p>
+                            <p className="text-white/80">{getFormattedDate()}</p>
                         </div>
-                        <button className="p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all hover:scale-110 active:scale-95">
-                            <Settings className="w-6 h-6" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <button 
+                                onClick={handleRefresh}
+                                disabled={refreshing}
+                                className="p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all hover:scale-110 active:scale-95 disabled:opacity-50"
+                            >
+                                <RefreshCw className={`w-6 h-6 ${refreshing ? 'animate-spin' : ''}`} />
+                            </button>
+                            <Link to="/settings">
+                                <button className="p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all hover:scale-110 active:scale-95">
+                                    <Settings className="w-6 h-6" />
+                                </button>
+                            </Link>
+                        </div>
                     </div>
 
                     {/* Daily Calorie Progress */}
@@ -100,12 +175,14 @@ const NutritionTab = () => {
                             <div>
                                 <p className="text-white/80 text-sm mb-1">Calories Today</p>
                                 <p className="text-4xl font-bold">
-                                    {userData.consumedCalories}
-                                    <span className="text-xl text-white/60"> / {userData.targetCalories}</span>
+                                    {Math.round(nutrition.consumed.calories)}
+                                    <span className="text-xl text-white/60"> / {nutrition.targets.calories}</span>
                                 </p>
                             </div>
                             <div className="text-right">
-                                <p className="text-2xl font-bold">{userData.targetCalories - userData.consumedCalories}</p>
+                                <p className="text-2xl font-bold">
+                                    {Math.max(0, nutrition.targets.calories - Math.round(nutrition.consumed.calories))}
+                                </p>
                                 <p className="text-white/80 text-sm">Remaining</p>
                             </div>
                         </div>
@@ -136,15 +213,15 @@ const NutritionTab = () => {
                             <span className="text-xs font-semibold text-accent">Protein</span>
                         </div>
                         <p className="text-2xl font-bold text-text mb-1">
-                            {userData.consumedProtein}g
+                            {nutrition.consumed.protein}g
                         </p>
                         <div className="w-full bg-border rounded-full h-1.5 mb-1 overflow-hidden">
                             <div
                                 className="bg-accent h-1.5 rounded-full transition-all duration-1000 ease-out"
-                                style={{ width: `${Math.min(proteinProgress, 100)}%` }}
+                                style={{ width: `${Math.min((nutrition.consumed.protein / nutrition.targets.protein) * 100, 100)}%` }}
                             />
                         </div>
-                        <p className="text-xs text-text-secondary">of {userData.targetProtein}g</p>
+                        <p className="text-xs text-text-secondary">of {nutrition.targets.protein}g</p>
                     </div>
 
                     {/* Carbs */}
@@ -156,15 +233,15 @@ const NutritionTab = () => {
                             <span className="text-xs font-semibold text-primary">Carbs</span>
                         </div>
                         <p className="text-2xl font-bold text-text mb-1">
-                            {userData.consumedCarbs}g
+                            {nutrition.consumed.carbs}g
                         </p>
                         <div className="w-full bg-border rounded-full h-1.5 mb-1 overflow-hidden">
                             <div
                                 className="bg-primary h-1.5 rounded-full transition-all duration-1000 ease-out"
-                                style={{ width: `${Math.min(carbsProgress, 100)}%` }}
+                                style={{ width: `${Math.min((nutrition.consumed.carbs / nutrition.targets.carbs) * 100, 100)}%` }}
                             />
                         </div>
-                        <p className="text-xs text-text-secondary">of {userData.targetCarbs}g</p>
+                        <p className="text-xs text-text-secondary">of {nutrition.targets.carbs}g</p>
                     </div>
 
                     {/* Fats */}
@@ -176,21 +253,27 @@ const NutritionTab = () => {
                             <span className="text-xs font-semibold text-secondary">Fats</span>
                         </div>
                         <p className="text-2xl font-bold text-text mb-1">
-                            {userData.consumedFats}g
+                            {nutrition.consumed.fats}g
                         </p>
                         <div className="w-full bg-border rounded-full h-1.5 mb-1 overflow-hidden">
                             <div
                                 className="bg-secondary h-1.5 rounded-full transition-all duration-1000 ease-out"
-                                style={{ width: `${Math.min(fatsProgress, 100)}%` }}
+                                style={{ width: `${Math.min((nutrition.consumed.fats / nutrition.targets.fats) * 100, 100)}%` }}
                             />
                         </div>
-                        <p className="text-xs text-text-secondary">of {userData.targetFats}g</p>
+                        <p className="text-xs text-text-secondary">of {nutrition.targets.fats}g</p>
                     </div>
                 </div>
 
                 {/* Meal Type Tabs */}
                 <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-                    {mealTypes.map((meal) => {
+                    {[
+                        { value: 'all', label: 'All Meals', icon: UtensilsCrossed, color: '#4F46E5', count: todaysFoods.length },
+                        { value: 'breakfast', label: 'Breakfast', icon: Coffee, color: '#F59E0B', count: mealGroups.breakfast.length },
+                        { value: 'lunch', label: 'Lunch', icon: Salad, color: '#10B981', count: mealGroups.lunch.length },
+                        { value: 'dinner', label: 'Dinner', icon: UtensilsCrossed, color: '#8B5CF6', count: mealGroups.dinner.length },
+                        { value: 'snacks', label: 'Snacks', icon: Apple, color: '#EF4444', count: mealGroups.snacks.length }
+                    ].map((meal) => {
                         const IconComponent = meal.icon;
                         return (
                             <button
@@ -222,72 +305,85 @@ const NutritionTab = () => {
 
                 {/* Meals List */}
                 <div className="space-y-4 mb-6">
-                    {getFilteredMeals().length > 0 ? (
-                        getFilteredMeals().map((meal, index) => {
-                            const mealIcon = mealTypes.find(m => m.value === meal.type);
-                            const MealIconComponent = mealIcon?.icon;
+                    {getFilteredFoods().length > 0 ? (
+                        Object.entries(groupFoodsByMeal(getFilteredFoods())).map(([mealType, foods], mealIndex) => {
+                            if (foods.length === 0) return null;
+                            
+                            const mealInfo = [
+                                { value: 'breakfast', label: 'Breakfast', icon: Coffee, color: '#F59E0B' },
+                                { value: 'lunch', label: 'Lunch', icon: Salad, color: '#10B981' },
+                                { value: 'dinner', label: 'Dinner', icon: UtensilsCrossed, color: '#8B5CF6' },
+                                { value: 'snacks', label: 'Snacks', icon: Apple, color: '#EF4444' }
+                            ].find(m => m.value === mealType);
+                            
+                            const MealIconComponent = mealInfo?.icon;
+                            const mealTotal = foods.reduce((sum, food) => sum + food.calories, 0);
                             
                             return (
                                 <div
-                                    key={meal.id}
+                                    key={mealType}
                                     className="bg-surface rounded-2xl p-5 shadow-md hover:shadow-xl transition-all duration-300 animate-fade-in"
-                                    style={{ animationDelay: `${index * 0.1}s` }}
+                                    style={{ animationDelay: `${mealIndex * 0.1}s` }}
                                 >
                                     {/* Meal Header */}
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="flex items-center gap-3">
                                             <div 
                                                 className="w-12 h-12 rounded-xl flex items-center justify-center"
-                                                style={{ backgroundColor: `${mealIcon?.color}20` }}
+                                                style={{ backgroundColor: `${mealInfo?.color}20` }}
                                             >
                                                 {MealIconComponent && (
                                                     <MealIconComponent 
                                                         className="w-6 h-6" 
                                                         strokeWidth={2.5}
-                                                        style={{ color: mealIcon.color }}
+                                                        style={{ color: mealInfo.color }}
                                                     />
                                                 )}
                                             </div>
                                             <div>
                                                 <h3 className="font-bold text-lg text-text capitalize">
-                                                    {meal.type}
+                                                    {mealInfo?.label || mealType}
                                                 </h3>
-                                                <p className="text-sm text-text-secondary">{meal.time}</p>
+                                                <p className="text-sm text-text-secondary">
+                                                    {foods[0]?.time || 'Not specified'}
+                                                </p>
                                             </div>
                                         </div>
                                         <div className="text-right">
                                             <p className="text-xl font-bold text-primary">
-                                                {meal.items.reduce((sum, item) => sum + item.calories, 0)} cal
+                                                {mealTotal} cal
                                             </p>
                                             <p className="text-xs text-text-secondary">
-                                                {meal.items.length} item{meal.items.length > 1 ? 's' : ''}
+                                                {foods.length} item{foods.length > 1 ? 's' : ''}
                                             </p>
                                         </div>
                                     </div>
 
                                     {/* Food Items */}
                                     <div className="space-y-2">
-                                        {meal.items.map((item, idx) => (
+                                        {foods.map((food, idx) => (
                                             <div
-                                                key={idx}
+                                                key={food._id || idx}
                                                 className="flex items-center justify-between p-3 bg-bg rounded-lg hover:bg-border/30 transition-all duration-200 group"
                                             >
                                                 <div className="flex-1">
-                                                    <p className="font-medium text-text">{item.name}</p>
-                                                    <p className="text-sm text-text-secondary">{item.quantity}</p>
+                                                    <p className="font-medium text-text">{food.name}</p>
+                                                    <p className="text-sm text-text-secondary">
+                                                        {food.quantity} {food.unit || 'serving'}
+                                                    </p>
                                                 </div>
                                                 <div className="flex items-center gap-4">
                                                     <div className="text-right">
-                                                        <p className="font-semibold text-text">{item.calories} cal</p>
+                                                        <p className="font-semibold text-text">{food.calories} cal</p>
                                                         <p className="text-xs text-text-secondary">
-                                                            P: {item.protein}g • C: {item.carbs}g • F: {item.fats}g
+                                                            P: {food.protein}g • C: {food.carbs}g • F: {food.fats}g
                                                         </p>
                                                     </div>
                                                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                                        <button className="p-2 hover:bg-primary/10 rounded-lg transition-all hover:scale-110 active:scale-95">
-                                                            <Edit2 className="w-4 h-4 text-primary" />
-                                                        </button>
-                                                        <button className="p-2 hover:bg-red-50 rounded-lg transition-all hover:scale-110 active:scale-95">
+                                                        <button 
+                                                            onClick={() => handleDeleteFood(food._id)}
+                                                            className="p-2 hover:bg-red-50 rounded-lg transition-all hover:scale-110 active:scale-95"
+                                                        >
                                                             <Trash2 className="w-4 h-4 text-red-500" />
                                                         </button>
                                                     </div>
@@ -304,7 +400,9 @@ const NutritionTab = () => {
                                 <UtensilsCrossed className="w-10 h-10 text-primary" strokeWidth={2} />
                             </div>
                             <h3 className="text-xl font-bold text-text mb-2">No meals logged yet</h3>
-                            <p className="text-text-secondary mb-6">Start tracking your {selectedMeal !== 'all' ? selectedMeal : 'meals'} to reach your goals!</p>
+                            <p className="text-text-secondary mb-6">
+                                Start tracking your {selectedMeal !== 'all' ? selectedMeal : 'meals'} to reach your goals!
+                            </p>
                         </div>
                     )}
                 </div>
@@ -312,7 +410,7 @@ const NutritionTab = () => {
 
             {/* Floating Add Button */}
             <Link to="/nutrition/add">
-                <button className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-primary to-accent text-white rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 active:scale-90 transition-all duration-300 hover:shadow-3xl">
+                <button className="fixed bottom-6 right-6 w-16 h-16 bg-linear-to-br from-primary to-accent text-white rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 active:scale-90 transition-all duration-300 hover:shadow-3xl">
                     <Plus className="w-8 h-8" strokeWidth={2.5} />
                 </button>
             </Link>

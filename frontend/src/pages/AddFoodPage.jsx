@@ -1,33 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-    Sunrise, 
-    Sun, 
-    Moon, 
-    Popcorn, 
-    Search, 
-    Edit3, 
-    Camera, 
-    ArrowLeft, 
-    Plus, 
-    CheckCircle,
-    SearchX,
-    Apple,
-    ScanBarcode
-} from 'lucide-react';
+import { IconArrowLeft, IconSearch, IconEdit, IconPlus } from '@tabler/icons-react';
 import { foodApi } from '../api/foodApi';
 import { toast } from 'sonner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import MealTypeSelector from '@/components/food/MealTypeSelector';
+import SearchTab from '@/components/food/SearchTab';
+import ManualEntryTab from '@/components/food/ManualEntryTab';
+import { searchFoods, categories } from '../data/foodDatabase';
 
 const AddFoodPage = () => {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState('search'); // search, manual, barcode
+    const [activeTab, setActiveTab] = useState('search');
+    const [selectedMealType, setSelectedMealType] = useState('breakfast');
+
+    // Search State
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
-    const [isSearching, setIsSearching] = useState(false);
-    const [selectedMealType, setSelectedMealType] = useState('breakfast');
-    const [showCustomFood, setShowCustomFood] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [searching, setSearching] = useState(false);
 
-    // Manual/Custom Food Form State
+    // Manual Entry State
     const [customFood, setCustomFood] = useState({
         name: '',
         quantity: '',
@@ -38,480 +31,183 @@ const AddFoodPage = () => {
         fats: '',
     });
 
-    // Barcode State
-    const [barcodeInput, setBarcodeInput] = useState('');
-    const [scanningBarcode, setScanningBarcode] = useState(false);
-
-    const mealTypes = [
-        { value: 'breakfast', label: 'Breakfast', icon: Sunrise, color: 'text-orange-500' },
-        { value: 'lunch', label: 'Lunch', icon: Sun, color: 'text-yellow-500' },
-        { value: 'dinner', label: 'Dinner', icon: Moon, color: 'text-indigo-500' },
-        { value: 'snacks', label: 'Snacks', icon: Popcorn, color: 'text-amber-600' },
-    ];
-
-    const units = ['g', 'ml', 'oz', 'cup', 'tbsp', 'tsp', 'piece', 'slice', 'serving'];
-
-    // Mock search function - replace with actual API call
-    const handleSearch = async (query) => {
-        if (query.length < 2) {
-            setSearchResults([]);
+    // Handle search
+    const handleSearch = () => {
+        if (searchQuery.length < 2) {
+            toast.error('Please enter at least 2 characters');
             return;
         }
 
-        setIsSearching(true);
-
-        // Simulate API delay
+        setSearching(true);
+        
+        // Simulate search delay for better UX
         setTimeout(() => {
-            // Mock results - replace with actual API data
-            const mockResults = [
-                {
-                    id: 1,
-                    name: 'Grilled Chicken Breast',
-                    brand: 'Generic',
-                    servingSize: '100g',
-                    calories: 165,
-                    protein: 31,
-                    carbs: 0,
-                    fats: 3.6,
-                    verified: true,
-                },
-                {
-                    id: 2,
-                    name: 'Chicken Breast (Skinless)',
-                    brand: 'USDA',
-                    servingSize: '100g',
-                    calories: 165,
-                    protein: 31,
-                    carbs: 0,
-                    fats: 3.6,
-                    verified: true,
-                },
-                {
-                    id: 3,
-                    name: 'Rotisserie Chicken Breast',
-                    brand: 'Costco',
-                    servingSize: '100g',
-                    calories: 140,
-                    protein: 28,
-                    carbs: 1,
-                    fats: 3,
-                    verified: false,
-                },
-            ];
-
-            setSearchResults(mockResults.filter(item =>
-                item.name.toLowerCase().includes(query.toLowerCase())
-            ));
-            setIsSearching(false);
-        }, 500);
+            const results = searchFoods(searchQuery);
+            setSearchResults(results);
+            
+            if (results.length === 0) {
+                toast.info('No results found. Try manual entry!');
+            }
+            setSearching(false);
+        }, 300);
     };
 
-    useEffect(() => {
-        const debounce = setTimeout(() => {
-            if (searchQuery) {
-                handleSearch(searchQuery);
-            }
-        }, 300);
-
-        return () => clearTimeout(debounce);
-    }, [searchQuery]);
-
-    const handleAddFood = async (food) => {
+    // Handle manual food submission
+    const handleCustomFoodSubmit = async (e) => {
+        e.preventDefault();
         try {
-            // Prepare data for backend
             const foodData = {
-                name: food.name,
+                name: customFood.name,
+                quantity: parseFloat(customFood.quantity),
+                servingSize: `${customFood.quantity}${customFood.unit}`,
+                calories: parseFloat(customFood.calories),
+                protein: parseFloat(customFood.protein) || 0,
+                carbs: parseFloat(customFood.carbs) || 0,
+                fats: parseFloat(customFood.fats) || 0,
                 mealType: selectedMealType,
-                calories: parseFloat(food.calories) || 0,
-                protein: parseFloat(food.protein) || 0,
-                carbs: parseFloat(food.carbs) || 0,
-                fats: parseFloat(food.fats) || 0,
-                servingSize: `${food.quantity}${food.unit}`,
-                quantity: 1,
                 date: new Date().toISOString().split('T')[0],
-                time: new Date().toTimeString().slice(0, 5),
+                time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
             };
 
-            const response = await foodApi.addFood(foodData);
+            await foodApi.addFood(foodData);
+            toast.success(`${customFood.name} added to ${selectedMealType}!`);
             
-            if (response.success) {
-                toast.success('Food added successfully!');
-                navigate('/nutrition');
-            }
+            // Reset form
+            setCustomFood({
+                name: '',
+                quantity: '',
+                unit: 'g',
+                calories: '',
+                protein: '',
+                carbs: '',
+                fats: '',
+            });
+            
+            // Navigate back
+            setTimeout(() => navigate('/nutrition'), 500);
         } catch (error) {
             console.error('Error adding food:', error);
             toast.error(error.response?.data?.message || 'Failed to add food');
         }
     };
 
-    const handleCustomFoodSubmit = async (e) => {
-        e.preventDefault();
-        await handleAddFood(customFood);
-    };
-
-    const handleBarcodeSearch = async (barcode) => {
-        setScanningBarcode(true);
-        // Simulate API call to OpenFoodFacts or FatSecret
-        setTimeout(() => {
-            // Mock barcode result
-            const mockBarcodeFood = {
-                name: 'Quest Protein Bar - Chocolate Chip',
-                brand: 'Quest Nutrition',
-                servingSize: '60g',
-                calories: 200,
-                protein: 20,
-                carbs: 22,
-                fats: 8,
-                barcode: barcode,
+    // Add food from search results
+    const handleAddFood = async (food) => {
+        try {
+            // Parse serving size to get quantity
+            const servingMatch = food.serving.match(/(\d+)/);
+            const quantity = servingMatch ? parseFloat(servingMatch[0]) : 100;
+            
+            const foodData = {
+                name: food.name,
+                quantity: quantity,
+                servingSize: food.serving,
+                calories: food.calories,
+                protein: food.protein,
+                carbs: food.carbs,
+                fats: food.fats,
+                mealType: selectedMealType,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
             };
-            setSearchResults([mockBarcodeFood]);
-            setScanningBarcode(false);
-            setActiveTab('search');
-        }, 1000);
+
+            await foodApi.addFood(foodData);
+            toast.success(`${food.name} added to ${selectedMealType}!`);
+            setTimeout(() => navigate('/nutrition'), 500);
+        } catch (error) {
+            console.error('Error adding food:', error);
+            toast.error(error.response?.data?.message || 'Failed to add food');
+        }
     };
 
     return (
-        <div className="min-h-screen bg-bg pb-6 pt-16">
-            {/* Header */}
-            <div className="bg-linear-to-r from-primary to-accent text-white px-4 py-6 sticky top-16 z-10">
-                <div className="max-w-2xl mx-auto flex items-center gap-4">
-                    <button
-                        onClick={() => navigate('/nutrition')}
-                        className="p-2 hover:bg-white/20 rounded-full transition"
-                    >
-                        <ArrowLeft className="w-6 h-6" />
-                    </button>
-                    <div className="flex-1">
-                        <h1 className="text-2xl font-bold">Add Food</h1>
-                        <p className="text-white/80 text-sm">Track your nutrition</p>
+        <div className="min-h-screen bg-linear-to-br from-background via-background to-muted/20 pb-8 pt-16">
+            {/* Modern Header */}
+            <div className="bg-linear-to-r from-primary via-primary/90 to-accent text-white px-4 py-8 sticky top-16 z-10 shadow-lg">
+                <div className="max-w-4xl mx-auto">
+                    <div className="flex items-center gap-4 mb-4">
+                        <button
+                            onClick={() => navigate('/nutrition')}
+                            className="p-2.5 hover:bg-white/20 rounded-xl transition-all hover:scale-105 active:scale-95"
+                        >
+                            <IconArrowLeft className="w-6 h-6" stroke={2.5} />
+                        </button>
+                        <div className="flex-1">
+                            <h1 className="text-3xl font-bold mb-1 tracking-tight">Add Food</h1>
+                            <p className="text-white/80 text-sm">Search our database or add manually</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="max-w-2xl mx-auto px-4 mt-6">
+            {/* Main Content */}
+            <div className="max-w-4xl mx-auto px-4 mt-6">
                 {/* Meal Type Selection */}
-                <div className="mb-6">
-                    <label className="block text-sm font-semibold text-text mb-3">Select Meal</label>
-                    <div className="grid grid-cols-4 gap-2">
-                        {mealTypes.map((meal) => {
-                            const MealIcon = meal.icon;
-                            return (
-                                <button
-                                    key={meal.value}
-                                    onClick={() => setSelectedMealType(meal.value)}
-                                    className={`p-3 rounded-xl text-center transition-all duration-200 active:scale-95 ${
-                                        selectedMealType === meal.value
-                                            ? 'bg-primary text-white shadow-md'
-                                            : 'bg-surface text-text hover:bg-surface/80'
-                                    }`}
-                                >
-                                    <MealIcon className={`w-6 h-6 mx-auto mb-1 ${selectedMealType === meal.value ? 'text-white' : meal.color}`} />
-                                    <div className="text-xs font-medium">{meal.label}</div>
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
+                <MealTypeSelector
+                    selectedMealType={selectedMealType}
+                    onMealTypeChange={setSelectedMealType}
+                />
 
-                {/* Tabs */}
-                <div className="flex gap-2 mb-6 border-b border-border">
-                    <button
-                        onClick={() => setActiveTab('search')}
-                        className={`flex-1 pb-3 font-semibold transition-colors relative flex items-center justify-center gap-2 ${
-                            activeTab === 'search' ? 'text-primary' : 'text-text-secondary'
-                        }`}
-                    >
-                        <Search className="w-4 h-4" />
-                        Search
-                        {activeTab === 'search' && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                        )}
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('manual')}
-                        className={`flex-1 pb-3 font-semibold transition-colors relative flex items-center justify-center gap-2 ${
-                            activeTab === 'manual' ? 'text-primary' : 'text-text-secondary'
-                        }`}
-                    >
-                        <Edit3 className="w-4 h-4" />
-                        Manual
-                        {activeTab === 'manual' && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                        )}
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('barcode')}
-                        className={`flex-1 pb-3 font-semibold transition-colors relative flex items-center justify-center gap-2 ${
-                            activeTab === 'barcode' ? 'text-primary' : 'text-text-secondary'
-                        }`}
-                    >
-                        <Camera className="w-4 h-4" />
-                        Barcode
-                        {activeTab === 'barcode' && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                        )}
-                    </button>
-                </div>
+                {/* Tabs for different input methods */}
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                        <TabsTrigger value="search" className="flex items-center gap-2">
+                            <IconSearch className="w-4 h-4" stroke={2} />
+                            <span>Search Database</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="manual" className="flex items-center gap-2">
+                            <IconEdit className="w-4 h-4" stroke={2} />
+                            <span>Manual Entry</span>
+                        </TabsTrigger>
+                    </TabsList>
 
-                {/* Tab Content */}
-                <div>
-                    {/* Search Tab */}
-                    {activeTab === 'search' && (
-                        <div className="animate-fade-in">
-                            {/* Search Bar */}
-                            <div className="relative mb-6">
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder="Search foods (e.g., chicken breast, oatmeal)"
-                                    className="w-full px-4 py-3 pl-12 bg-surface border-2 border-border rounded-xl focus:border-primary focus:outline-none text-text"
-                                />
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
-                                {isSearching && (
-                                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                        <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                                    </div>
-                                )}
-                            </div>
+                    <TabsContent value="search">
+                        <SearchTab
+                            searchQuery={searchQuery}
+                            onSearchChange={setSearchQuery}
+                            onSearch={handleSearch}
+                            searchResults={searchResults}
+                            searching={searching}
+                            onAddFood={handleAddFood}
+                            categories={categories}
+                            selectedCategory={selectedCategory}
+                            onCategoryChange={setSelectedCategory}
+                        />
+                    </TabsContent>
 
-                            {/* Search Results */}
-                            <div className="space-y-3">
-                                {searchResults.length > 0 ? (
-                                    <>
-                                        {searchResults.map((food) => (
-                                            <div
-                                                key={food.id}
-                                                className="bg-surface rounded-xl p-4 hover:shadow-md transition-shadow cursor-pointer animate-fade-in"
-                                                onClick={() => handleAddFood(food)}
-                                            >
-                                                <div className="flex items-start justify-between">
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <h3 className="font-semibold text-text">{food.name}</h3>
-                                                            {food.verified && (
-                                                                <CheckCircle className="w-4 h-4 text-accent fill-accent/20" />
-                                                            )}
-                                                        </div>
-                                                        <p className="text-sm text-text-secondary mb-2">
-                                                            {food.brand} • {food.servingSize}
-                                                        </p>
-                                                        <div className="flex gap-3 text-xs">
-                                                            <span className="font-semibold text-primary">{food.calories} cal</span>
-                                                            <span className="text-text-secondary">P: {food.protein}g</span>
-                                                            <span className="text-text-secondary">C: {food.carbs}g</span>
-                                                            <span className="text-text-secondary">F: {food.fats}g</span>
-                                                        </div>
-                                                    </div>
-                                                    <button className="p-2 bg-primary/10 text-primary rounded-full hover:bg-primary hover:text-white transition">
-                                                        <Plus className="w-5 h-5" />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
+                    <TabsContent value="manual">
+                        <ManualEntryTab
+                            customFood={customFood}
+                            onCustomFoodChange={setCustomFood}
+                            onSubmit={handleCustomFoodSubmit}
+                            selectedMealType={selectedMealType}
+                        />
+                    </TabsContent>
+                </Tabs>
 
-                                        {/* Not Found - Add Custom */}
-                                        <button
-                                            onClick={() => setShowCustomFood(true)}
-                                            className="w-full p-4 border-2 border-dashed border-border rounded-xl hover:border-primary hover:bg-primary/5 transition-colors text-center animate-fade-in"
-                                        >
-                                            <p className="text-primary font-semibold">+ Can't find your food? Add custom</p>
-                                        </button>
-                                    </>
-                                ) : searchQuery.length > 0 && !isSearching ? (
-                                    <div className="text-center py-12">
-                                        <SearchX className="w-16 h-16 mx-auto mb-3 text-gray-400" />
-                                        <p className="text-text-secondary mb-4">No results found for "{searchQuery}"</p>
-                                        <button
-                                            onClick={() => setShowCustomFood(true)}
-                                            className="px-6 py-2 bg-primary text-white rounded-full font-semibold hover:bg-primary/90 transition"
-                                        >
-                                            Add as Custom Food
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="text-center py-12">
-                                        <Apple className="w-20 h-20 mx-auto mb-3 text-red-500" />
-                                        <p className="text-text-secondary">Search for foods in our database</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Manual Entry Tab */}
-                    {activeTab === 'manual' && (
-                        <div className="animate-fade-in">
-                            <form onSubmit={handleCustomFoodSubmit} className="space-y-4">
-                                <div className="bg-surface rounded-xl p-6 space-y-4">
-                                    {/* Food Name */}
-                                    <div>
-                                        <label className="block text-sm font-semibold text-text mb-2">
-                                            Food Name *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={customFood.name}
-                                            onChange={(e) => setCustomFood({ ...customFood, name: e.target.value })}
-                                            placeholder="e.g., Homemade Pasta"
-                                            className="w-full px-4 py-3 bg-bg border-2 border-border rounded-xl focus:border-primary focus:outline-none text-text"
-                                            required
-                                        />
-                                    </div>
-
-                                    {/* Quantity & Unit */}
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label className="block text-sm font-semibold text-text mb-2">
-                                                Quantity *
-                                            </label>
-                                            <input
-                                                type="number"
-                                                value={customFood.quantity}
-                                                onChange={(e) => setCustomFood({ ...customFood, quantity: e.target.value })}
-                                                placeholder="100"
-                                                className="w-full px-4 py-3 bg-bg border-2 border-border rounded-xl focus:border-primary focus:outline-none text-text"
-                                                required
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-semibold text-text mb-2">
-                                                Unit *
-                                            </label>
-                                            <select
-                                                value={customFood.unit}
-                                                onChange={(e) => setCustomFood({ ...customFood, unit: e.target.value })}
-                                                className="w-full px-4 py-3 bg-bg border-2 border-border rounded-xl focus:border-primary focus:outline-none text-text"
-                                            >
-                                                {units.map(unit => (
-                                                    <option key={unit} value={unit}>{unit}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    {/* Calories */}
-                                    <div>
-                                        <label className="block text-sm font-semibold text-text mb-2">
-                                            Calories *
-                                        </label>
-                                        <input
-                                            type="number"
-                                            value={customFood.calories}
-                                            onChange={(e) => setCustomFood({ ...customFood, calories: e.target.value })}
-                                            placeholder="250"
-                                            className="w-full px-4 py-3 bg-bg border-2 border-border rounded-xl focus:border-primary focus:outline-none text-text"
-                                            required
-                                        />
-                                    </div>
-
-                                    {/* Macros */}
-                                    <div>
-                                        <label className="block text-sm font-semibold text-text mb-2">
-                                            Macronutrients (grams)
-                                        </label>
-                                        <div className="grid grid-cols-3 gap-3">
-                                            <div>
-                                                <label className="block text-xs text-text-secondary mb-1">Protein</label>
-                                                <input
-                                                    type="number"
-                                                    value={customFood.protein}
-                                                    onChange={(e) => setCustomFood({ ...customFood, protein: e.target.value })}
-                                                    placeholder="20"
-                                                    className="w-full px-3 py-2 bg-bg border-2 border-border rounded-lg focus:border-accent focus:outline-none text-text text-sm"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs text-text-secondary mb-1">Carbs</label>
-                                                <input
-                                                    type="number"
-                                                    value={customFood.carbs}
-                                                    onChange={(e) => setCustomFood({ ...customFood, carbs: e.target.value })}
-                                                    placeholder="30"
-                                                    className="w-full px-3 py-2 bg-bg border-2 border-border rounded-lg focus:border-primary focus:outline-none text-text text-sm"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs text-text-secondary mb-1">Fats</label>
-                                                <input
-                                                    type="number"
-                                                    value={customFood.fats}
-                                                    onChange={(e) => setCustomFood({ ...customFood, fats: e.target.value })}
-                                                    placeholder="10"
-                                                    className="w-full px-3 py-2 bg-bg border-2 border-border rounded-lg focus:border-secondary focus:outline-none text-text text-sm"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Submit Button */}
-                                <button
-                                    type="submit"
-                                    className="w-full py-4 bg-linear-to-r from-primary to-accent text-white font-bold rounded-xl shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-transform"
-                                >
-                                    Add to {selectedMealType.charAt(0).toUpperCase() + selectedMealType.slice(1)}
-                                </button>
-                            </form>
-                        </div>
-                    )}
-
-                    {/* Barcode Tab */}
-                    {activeTab === 'barcode' && (
-                        <div className="animate-fade-in">
-                            <div className="bg-surface rounded-xl p-8 text-center">
-                                <div className="mb-6">
-                                    <div className="w-32 h-32 mx-auto mb-4 bg-linear-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center">
-                                        <ScanBarcode className="w-16 h-16 text-primary" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-text mb-2">Scan Barcode</h3>
-                                    <p className="text-text-secondary mb-6">
-                                        Instantly add food by scanning product barcodes
-                                    </p>
-                                </div>
-
-                                {/* Manual Barcode Input */}
-                                <div className="mb-4">
-                                    <label className="block text-sm font-semibold text-text mb-2 text-left">
-                                        Or enter barcode manually
-                                    </label>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            value={barcodeInput}
-                                            onChange={(e) => setBarcodeInput(e.target.value)}
-                                            placeholder="Enter barcode number"
-                                            className="flex-1 px-4 py-3 bg-bg border-2 border-border rounded-xl focus:border-primary focus:outline-none text-text"
-                                        />
-                                        <button
-                                            onClick={() => handleBarcodeSearch(barcodeInput)}
-                                            disabled={!barcodeInput || scanningBarcode}
-                                            className="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            {scanningBarcode ? (
-                                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                            ) : (
-                                                'Search'
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="pt-4 border-t border-border">
+                {/* Quick Add Suggestions */}
+                {activeTab === 'search' && !searchQuery && searchResults.length === 0 && (
+                    <div className="mt-6">
+                        <h3 className="text-sm font-semibold text-muted-foreground mb-3">Popular for {selectedMealType}</h3>
+                        <div className="grid grid-cols-2 gap-3">
+                            {searchFoods(selectedMealType === 'breakfast' ? 'oatmeal' : 
+                                          selectedMealType === 'lunch' ? 'chicken' :
+                                          selectedMealType === 'dinner' ? 'salmon' : 'protein')
+                                .slice(0, 4)
+                                .map((food, index) => (
                                     <button
-                                        className="w-full py-4 bg-linear-to-r from-primary to-accent text-white font-bold rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-transform flex items-center justify-center gap-2"
+                                        key={index}
+                                        onClick={() => handleAddFood(food)}
+                                        className="p-3 bg-card border border-border rounded-xl hover:border-primary hover:shadow-md transition-all text-left"
                                     >
-                                        <Camera className="w-5 h-5" />
-                                        Open Camera Scanner
+                                        <p className="font-medium text-sm mb-1">{food.name}</p>
+                                        <p className="text-xs text-muted-foreground">{food.calories} cal • {food.serving}</p>
                                     </button>
-                                    <p className="text-xs text-text-secondary mt-3">
-                                        Powered by OpenFoodFacts & FatSecret
-                                    </p>
-                                </div>
-                            </div>
+                                ))
+                            }
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
         </div>
     );
