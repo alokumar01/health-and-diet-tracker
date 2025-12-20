@@ -1,4 +1,6 @@
 import Food from '../../models/food.js';
+import { getFoodRecommendations, analyzeFoodItem, searchFoods } from '../../services/geminiAI.js';
+import User from '../../models/user.js';
 
 // Add food entry
 export const addFood = async (req, res, next) => {
@@ -251,5 +253,89 @@ export const getWeeklyNutritionStats = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+// AI-powered food recommendations
+export const getAIFoodRecommendations = async (req, res, next) => {
+  try {
+    const { mealType, model } = req.query;
+    
+    // Get user profile
+    const user = await User.findById(req.user._id).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Get AI recommendations
+    const recommendations = await getFoodRecommendations(user, mealType || 'any', model);
+
+    res.status(200).json(recommendations);
+  } catch (error) {
+    console.error('AI Recommendations Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get AI recommendations',
+      error: error.message,
+    });
+  }
+};
+
+// AI-powered food search
+export const searchFoodsAI = async (req, res, next) => {
+  try {
+    const { query, model } = req.query;
+
+    if (!query || query.length < 2) {
+      return res.status(400).json({
+        success: false,
+        message: 'Search query must be at least 2 characters',
+      });
+    }
+
+    // Get user profile for dietary preferences
+    const user = await User.findById(req.user._id).select('dietaryPreferences');
+
+    // Search using AI
+    const searchResults = await searchFoods(query, user || {}, model);
+
+    res.status(200).json(searchResults);
+  } catch (error) {
+    console.error('AI Search Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to search foods',
+      error: error.message,
+    });
+  }
+};
+
+// Analyze food item using AI
+export const analyzeFoodAI = async (req, res, next) => {
+  try {
+    const { foodName, model } = req.body;
+
+    if (!foodName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Food name is required',
+      });
+    }
+
+    // Analyze using AI
+    const analysis = await analyzeFoodItem(foodName, model);
+
+    res.status(200).json(analysis);
+  } catch (error) {
+    console.error('AI Analysis Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to analyze food',
+      error: error.message,
+    });
   }
 };

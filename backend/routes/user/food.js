@@ -6,6 +6,9 @@ import {
   updateFood,
   deleteFood,
   getWeeklyNutritionStats,
+  getAIFoodRecommendations,
+  searchFoodsAI,
+  analyzeFoodAI,
 } from '../../controllers/user/food.js';
 import { authenticate } from '../../middleware/auth.js';
 
@@ -13,6 +16,11 @@ const router = express.Router();
 
 // All routes require authentication
 router.use(authenticate);
+
+// AI-powered routes
+router.get('/ai/recommendations', getAIFoodRecommendations);
+router.get('/ai/search', searchFoodsAI);
+router.post('/ai/analyze', analyzeFoodAI);
 
 // Add food
 router.post('/', addFood);
